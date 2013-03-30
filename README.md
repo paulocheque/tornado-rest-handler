@@ -1,6 +1,8 @@
 tornado-rest-handler
 ====================
 
+![Continuous Integration Status](https://secure.travis-ci.org/paulocheque/tornado-rest-handler.png)
+
 A simple Python Tornado handler that manage Rest requests automatically
 
 * [Basic Example of Usage](#basic-example-of-usage)
