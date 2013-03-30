@@ -4,12 +4,19 @@ tornado-rest-handler
 A simple Python Tornado handler that manage Rest requests automatically
 
 * [Basic Example of Usage](#basic-example-of-usage)
+  * Routes
+  * Handler implementation
+  * Templates
 * [Installation](#installation)
+* [Customization](#customization)
+* [TODO](#todo)
 
 Basic Example of Usage
 ------------------------
 
-# Routes
+In the current implementation, there is only one handler for MongoEngine ORM.
+
+### Routes
 
 One handler for every Rest routes
 
@@ -21,6 +28,12 @@ One handler for every Rest routes
 * PUT    /animals/:id        update an animal data
 * DELETE /animals/:id        delete an animal
 
+Since HTML5-forms does not support PUT/DELETE. It is possible to use the following methods too:
+
+* POST /animals/:id/delete   Same as DELETE /animals/:id
+* POST /animals/:id          Same as PUT    /animals/:id
+
+
 ```python
     (r'/animals/?', AnimalHandler), # GET, POST
     (r'/animals/new/?', AnimalHandler), # GET
@@ -29,7 +42,9 @@ One handler for every Rest routes
 ```
 
 
-# Handler implementation
+### Handler implementation
+
+All the get/post/put/delete methods are implemented for you. Simple as that:
 
 ```python
 from tornardo_rest_handler import CrudHandler
@@ -38,7 +53,7 @@ class AnimalHandler(CrudHandler):
     document = Animal
 ```
 
-# Templates
+### Templates
 
 You must create your own template. It must have the names list.html, show.html and edit.html.
 
