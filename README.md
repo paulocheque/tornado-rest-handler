@@ -37,8 +37,8 @@ Since HTML5-forms does not support PUT/DELETE. It is possible to use the followi
 ```python
     (r'/animals/?', AnimalHandler), # GET, POST
     (r'/animals/new/?', AnimalHandler), # GET
-    (r'/animals/([0-9a-fA-F]{24,})/?', AnimalHandler), # GET, PUT, DELETE
-    (r'/animals/([0-9a-fA-F]{24,})/edit/?', AnimalHandler), # GET
+    (r'/animals/([0-9a-fA-F]{24,})/?', AnimalHandler), # GET, POST, PUT, DELETE
+    (r'/animals/([0-9a-fA-F]{24,})/(edit|delete)/?', AnimalHandler), # GET, POST
 ```
 
 
