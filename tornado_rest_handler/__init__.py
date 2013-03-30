@@ -20,11 +20,15 @@ class RestHandlerMetaclass(type):
 class RestHandler(tornado.web.RequestHandler):
     __metaclass__ = RestHandlerMetaclass
 
+    def find_instance_by_id(self, obj_id): pass
+    def save_instance(self, obj): pass
+    def update_instance(self, obj): pass
+    def delete_instance(self, obj): pass
+
     def obj(self, obj_id, fail_silently=False):
         try:
-            return self.query.clone().get(pk=obj_id)
+            return self.find_instance_by_id(obj_id)
         except Exception as e:
-            print e
             if fail_silently:
                 return None
             self.raise404()
@@ -64,7 +68,7 @@ class RestHandler(tornado.web.RequestHandler):
         try:
             data = self.get_request_data()
             instance = self.obj(obj_id)
-            instance.update(**data)
+            self.update_instance(instance, data)
             self.render_list('Object updated successfully.')
         except ValidationError as e:
             # TODO: capture errors to send to form
@@ -77,8 +81,7 @@ class RestHandler(tornado.web.RequestHandler):
             return self.put(obj_id)
         try:
             data = self.get_request_data()
-            instance = self.document(**data)
-            instance.save()
+            self.save_instance(data)
             self.render_list('Object added successfully.')
         except ValidationError as e:
             # TODO: capture errors to send to form
@@ -87,7 +90,22 @@ class RestHandler(tornado.web.RequestHandler):
     def delete(self, obj_id):
         instance = self.obj(obj_id)
         try:
-            instance.delete()
+            self.delete_instance(instance)
             self.render_list('Object could not be deleted.')
         except:
             self.render_list('Object deleted successfully.')
+
+
+class MongoEngineRestHandler(RestHandler):
+    def find_instance_by_id(self, instance_id):
+        return self.query.clone().get(pk=instance_id)
+
+    def save_instance(self, data):
+        instance = self.document(**data)
+        instance.save()
+
+    def update_instance(self, instance, data):
+        instance.update(**data)
+
+    def delete_instance(self, instance):
+        instance.delete()

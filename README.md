@@ -8,6 +8,7 @@ A simple Python Tornado handler that manage Rest requests automatically
   * Handler implementation
   * Templates
 * [Installation](#installation)
+* [More Handlers](#more-handlers)
 * [Customization](#customization)
 * [TODO](#todo)
 
@@ -47,9 +48,9 @@ Since HTML5-forms does not support PUT/DELETE. It is possible to use the followi
 All the get/post/put/delete methods are implemented for you. Simple as that:
 
 ```python
-from tornardo_rest_handler import RestHandler
+from tornardo_rest_handler import MongoEngineRestHandler
 
-class AnimalHandler(RestHandler):
+class AnimalHandler(MongoEngineRestHandler):
     document = Animal
 ```
 
@@ -64,9 +65,22 @@ You must create your own template. It must have the names list.html, show.html a
 By default, the directory is the document name in lower case. You may change the directory though:
 
 ```python
-class AnimalHandler(RestHandler):
+class AnimalHandler(MongoEngineRestHandler):
     document = Animal
     template_path = 'my_dir'
+```
+
+More Handlers
+-------------
+
+To create a RestHandler for your ORM you must override the RestHandler class and implement the following methods:
+
+```python
+class CouchDBRestHandler(RestHandler):
+    def find_instance_by_id(self, obj_id): pass
+    def save_instance(self, obj): pass
+    def update_instance(self, obj): pass
+    def delete_instance(self, obj): pass
 ```
 
 Customization
@@ -75,7 +89,7 @@ Customization
 By default, the list page will show all documents of that type. You can change this behavior through the 'query' attribute:
 
 ```python
-class AnimalHandler(RestHandler):
+class AnimalHandler(MongoEngineRestHandler):
     document = Animal
     query = Animal.objects.filter(...)
 ```
@@ -105,7 +119,7 @@ pip install -e git+git@github.com:paulocheque/tornado-rest-handler.git#egg=torna
 #### requirements.txt
 
 ```
-tornado-rest-handler==0.0.1
+tornado-rest-handler==0.0.2
 # or use the development version
 git+git://github.com/paulocheque/tornado-rest-handler.git#egg=tornado-rest-handler
 ```
@@ -131,7 +145,7 @@ TODO
 * Use fields and exclude to facilitate auto-generate forms:
 
 ```python
-class AnimalHandler(RestHandler):
+class AnimalHandler(MongoEngineRestHandler):
     document = Animal
     fields = []
     exclude = []
