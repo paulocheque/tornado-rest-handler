@@ -47,9 +47,9 @@ Since HTML5-forms does not support PUT/DELETE. It is possible to use the followi
 All the get/post/put/delete methods are implemented for you. Simple as that:
 
 ```python
-from tornardo_rest_handler import CrudHandler
+from tornardo_rest_handler import RestHandler
 
-class AnimalHandler(CrudHandler):
+class AnimalHandler(RestHandler):
     document = Animal
 ```
 
@@ -64,7 +64,7 @@ You must create your own template. It must have the names list.html, show.html a
 By default, the directory is the document name in lower case. You may change the directory though:
 
 ```python
-class AnimalHandler(CrudHandler):
+class AnimalHandler(RestHandler):
     document = Animal
     template_path = 'my_dir'
 ```
@@ -75,7 +75,7 @@ Customization
 By default, the list page will show all documents of that type. You can change this behavior through the 'query' attribute:
 
 ```python
-class AnimalHandler(CrudHandler):
+class AnimalHandler(RestHandler):
     document = Animal
     query = Animal.objects.filter(...)
 ```
@@ -131,7 +131,7 @@ TODO
 * Use fields and exclude to facilitate auto-generate forms:
 
 ```python
-class AnimalHandler(CrudHandler):
+class AnimalHandler(RestHandler):
     document = Animal
     fields = []
     exclude = []

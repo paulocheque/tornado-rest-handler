@@ -2,12 +2,12 @@
 import tornado.web
 
 
-class CrudHandlerMetaclass(type):
+class RestHandlerMetaclass(type):
     def __init__(cls, name, bases, attrs):
-        result = super(CrudHandlerMetaclass, cls).__init__(name, bases, attrs)
-        if attrs.get('__metaclass__') is not CrudHandlerMetaclass:
+        result = super(RestHandlerMetaclass, cls).__init__(name, bases, attrs)
+        if attrs.get('__metaclass__') is not RestHandlerMetaclass:
             if not cls.document:
-                raise NotImplementedError('CrudHandler classes requires the field "document".')
+                raise NotImplementedError('RestHandler classes requires the field "document".')
             cls.query = cls.document.objects.all()
             cls.fields = cls.document._fields.keys()
             cls.exclude = []
@@ -17,8 +17,8 @@ class CrudHandlerMetaclass(type):
         return result
 
 
-class CrudHandler(AccountsHandler):
-    __metaclass__ = CrudHandlerMetaclass
+class RestHandler(tornado.web.RequestHandler):
+    __metaclass__ = RestHandlerMetaclass
 
     def obj(self, obj_id, fail_silently=False):
         try:
@@ -30,7 +30,7 @@ class CrudHandler(AccountsHandler):
             self.raise404()
 
     def render(self, template_name, **kwargs):
-        super(CrudHandler, self).render(self.template_path + template_name, **kwargs)
+        super(RestHandler, self).render(self.template_path + template_name, **kwargs)
 
     def get_request_data(self):
         data = {}
