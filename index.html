@@ -31,32 +31,173 @@
     <!-- MAIN CONTENT -->
     <div id="main_content_wrap" class="outer">
       <section id="main_content" class="inner">
-        <h3>Welcome to GitHub Pages.</h3>
+        <h1>tornado-rest-handler</h1>
 
-<p>This automatic page generator is the easiest way to create beautiful pages for all of your projects. Author your page content here using GitHub Flavored Markdown, select a template crafted by a designer, and publish. After your page is generated, you can check out the new branch:</p>
+<p><img src="https://secure.travis-ci.org/paulocheque/tornado-rest-handler.png" alt="Continuous Integration Status"></p>
 
-<pre><code>$ cd your_repo_root/repo_name
-$ git fetch origin
-$ git checkout gh-pages
+<p>A simple Python Tornado handler that manage Rest requests automatically</p>
+
+<ul>
+<li>
+<a href="#basic-example-of-usage">Basic Example of Usage</a>
+
+<ul>
+<li>Routes</li>
+<li>Handler implementation</li>
+<li>Templates</li>
+</ul>
+</li>
+<li><a href="#installation">Installation</a></li>
+<li><a href="#more-handlers">More Handlers</a></li>
+<li><a href="#customization">Customization</a></li>
+<li><a href="#change-log">Change Log</a></li>
+<li><a href="#todo">TODO</a></li>
+</ul><h2>Basic Example of Usage</h2>
+
+<p>In the current implementation, there is only one handler for MongoEngine ORM.</p>
+
+<h3>Routes</h3>
+
+<p>One handler for every Rest routes</p>
+
+<ul>
+<li>GET    /animals index      display a list of all animals</li>
+<li>GET    /animals/new        new return an HTML form for creating a new animal</li>
+<li>POST   /animals create     create a new animal</li>
+<li>GET    /animals/:id show   show an animal</li>
+<li>GET    /animals/:id/edit   return an HTML form for editing a photo</li>
+<li>PUT    /animals/:id        update an animal data</li>
+<li>DELETE /animals/:id        delete an animal</li>
+</ul><p>Since HTML5-forms does not support PUT/DELETE. It is possible to use the following methods too:</p>
+
+<ul>
+<li>POST /animals/:id/delete   Same as DELETE /animals/:id</li>
+<li>POST /animals/:id          Same as PUT    /animals/:id</li>
+</ul><div class="highlight"><pre>    <span class="p">(</span><span class="s">r'/animals/?'</span><span class="p">,</span> <span class="n">AnimalHandler</span><span class="p">),</span> <span class="c"># GET, POST</span>
+    <span class="p">(</span><span class="s">r'/animals/new/?'</span><span class="p">,</span> <span class="n">AnimalHandler</span><span class="p">),</span> <span class="c"># GET</span>
+    <span class="p">(</span><span class="s">r'/animals/([0-9a-fA-F]{24,})/?'</span><span class="p">,</span> <span class="n">AnimalHandler</span><span class="p">),</span> <span class="c"># GET, POST, PUT, DELETE</span>
+    <span class="p">(</span><span class="s">r'/animals/([0-9a-fA-F]{24,})/(edit|delete)/?'</span><span class="p">,</span> <span class="n">AnimalHandler</span><span class="p">),</span> <span class="c"># GET, POST</span>
+</pre></div>
+
+<h3>Handler implementation</h3>
+
+<p>All the get/post/put/delete methods are implemented for you. Simple as that:</p>
+
+<div class="highlight"><pre><span class="kn">from</span> <span class="nn">tornardo_rest_handler</span> <span class="kn">import</span> <span class="n">MongoEngineRestHandler</span>
+
+<span class="k">class</span> <span class="nc">AnimalHandler</span><span class="p">(</span><span class="n">MongoEngineRestHandler</span><span class="p">):</span>
+    <span class="n">model</span> <span class="o">=</span> <span class="n">Animal</span>
+</pre></div>
+
+<h3>Templates</h3>
+
+<p>You must create your own template. It must have the names list.html, show.html and edit.html.</p>
+
+<ul>
+<li>animal/list.html</li>
+<li>animal/show.html</li>
+<li>animal/edit.html</li>
+</ul><p>By default, the directory is the model name in lower case. You may change the directory though:</p>
+
+<div class="highlight"><pre><span class="k">class</span> <span class="nc">AnimalHandler</span><span class="p">(</span><span class="n">MongoEngineRestHandler</span><span class="p">):</span>
+    <span class="n">model</span> <span class="o">=</span> <span class="n">Animal</span>
+    <span class="n">template_path</span> <span class="o">=</span> <span class="s">'my_dir'</span>
+</pre></div>
+
+<h2>More Handlers</h2>
+
+<p>To create a RestHandler for your ORM you must override the RestHandler class and implement the following methods:</p>
+
+<div class="highlight"><pre><span class="k">class</span> <span class="nc">CouchDBRestHandler</span><span class="p">(</span><span class="n">RestHandler</span><span class="p">):</span>
+    <span class="k">def</span> <span class="nf">instance_list</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span> <span class="k">return</span> <span class="p">[]</span> <span class="c"># it can return a list or a queryset etc</span>
+    <span class="k">def</span> <span class="nf">find_instance_by_id</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">obj_id</span><span class="p">):</span> <span class="k">pass</span>
+    <span class="k">def</span> <span class="nf">save_instance</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">obj</span><span class="p">):</span> <span class="k">pass</span>
+    <span class="k">def</span> <span class="nf">update_instance</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">obj</span><span class="p">):</span> <span class="k">pass</span>
+    <span class="k">def</span> <span class="nf">delete_instance</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">obj</span><span class="p">):</span> <span class="k">pass</span>
+</pre></div>
+
+<h2>Customization</h2>
+
+<p>By default, the list page will show all models of that type. To filter by user or other properties, override the instance_list method:</p>
+
+<div class="highlight"><pre><span class="k">class</span> <span class="nc">AnimalHandler</span><span class="p">(</span><span class="n">MongoEngineRestHandler</span><span class="p">):</span>
+    <span class="n">model</span> <span class="o">=</span> <span class="n">Animal</span>
+
+    <span class="k">def</span> <span class="nf">instance_list</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="k">return</span> <span class="n">Animal</span><span class="o">.</span><span class="n">objects</span><span class="o">.</span><span class="n">filter</span><span class="p">(</span><span class="o">...</span><span class="p">)</span>
+</pre></div>
+
+<p>To change the template names, override the following variables:</p>
+
+<div class="highlight"><pre><span class="k">class</span> <span class="nc">AnimalHandler</span><span class="p">(</span><span class="n">MongoEngineRestHandler</span><span class="p">):</span>
+    <span class="n">LIST_TEMPLATE</span> <span class="o">=</span> <span class="s">'list.html'</span>
+    <span class="n">EDIT_TEMPLATE</span> <span class="o">=</span> <span class="s">'edit.html'</span>
+    <span class="n">SHOW_TEMPLATE</span> <span class="o">=</span> <span class="s">'show.html'</span>
+</pre></div>
+
+<h2>Installation</h2>
+
+<pre><code>pip install tornado-rest-handler
 </code></pre>
 
-<p>If you're using the GitHub for Mac, simply sync your repository and you'll see the new branch.</p>
+<h4>or</h4>
 
-<h3>Designer Templates</h3>
+<pre><code>1. Download zip file
+2. Extract it
+3. Execute in the extracted directory: python setup.py install
+</code></pre>
 
-<p>We've crafted some handsome templates for you to use. Go ahead and continue to layouts to browse through them. You can easily go back to edit your page before publishing. After publishing your page, you can revisit the page generator and switch to another theme. Your Page content will be preserved if it remained markdown format.</p>
+<h4>Development version</h4>
 
-<h3>Rather Drive Stick?</h3>
+<pre><code>pip install -e git+git@github.com:paulocheque/tornado-rest-handler.git#egg=tornado-rest-handler
+</code></pre>
 
-<p>If you prefer to not use the automatic generator, push a branch named <code>gh-pages</code> to your repository to create a page manually. In addition to supporting regular HTML content, GitHub Pages support Jekyll, a simple, blog aware static site generator written by our own Tom Preston-Werner. Jekyll makes it easy to create site-wide headers and footers without having to copy them across every page. It also offers intelligent blog support and other advanced templating features.</p>
+<h4>requirements.txt</h4>
 
-<h3>Authors and Contributors</h3>
+<pre><code>tornado-rest-handler==0.0.2
+# or use the development version
+git+git://github.com/paulocheque/tornado-rest-handler.git#egg=tornado-rest-handler
+</code></pre>
 
-<p>You can <a href="https://github.com/blog/821" class="user-mention">@mention</a> a GitHub username to generate a link to their profile. The resulting <code>&lt;a&gt;</code> element will link to the contributor's GitHub Profile. For example: In 2007, Chris Wanstrath (<a href="https://github.com/defunkt" class="user-mention">@defunkt</a>), PJ Hyett (<a href="https://github.com/pjhyett" class="user-mention">@pjhyett</a>), and Tom Preston-Werner (<a href="https://github.com/mojombo" class="user-mention">@mojombo</a>) founded GitHub.</p>
+<h4>Upgrade:</h4>
 
-<h3>Support or Contact</h3>
+<pre><code>pip install tornado-rest-handler --upgrade --no-deps
+</code></pre>
 
-<p>Having trouble with Pages? Check out the documentation at <a href="http://help.github.com/pages">http://help.github.com/pages</a> or contact <a href="mailto:support@github.com">support@github.com</a> and we’ll help you sort it out.</p>
+<h4>Requirements</h4>
+
+<ul>
+<li>Python 2.6 or 2.7</li>
+<li>Tested with Tornado 2.4.1</li>
+</ul><h2>Change Log</h2>
+
+<h4>0.0.2 (2013/03/30)</h4>
+
+<ul>
+<li>[update] RestHandler adapted to be used for other ORMs.</li>
+<li>[new] MongoEngineRestHandler</li>
+<li>[new] Template customization: LIST_TEMPLATE, EDIT_TEMPLATE, SHOW_TEMPLATE variables.</li>
+<li>[update] Using OO instead of metaclasses for object list.</li>
+<li>[update] Better exception to alert bad implementations.</li>
+<li>[tests] Initial unit tests.</li>
+</ul><h4>0.0.1 (2013/03/30)</h4>
+
+<ul>
+<li>[new] RestHandler for MongoEngine</li>
+</ul><h2>TODO</h2>
+
+<ul>
+<li>Handlers for another ORMs (other than MongoEngine).</li>
+<li>Pagination</li>
+<li>Send valiation errors to forms</li>
+<li>i18n</li>
+<li>redirect instead of render for successffull actions.</li>
+<li>Use fields and exclude to facilitate auto-generate forms:</li>
+</ul><div class="highlight"><pre><span class="k">class</span> <span class="nc">AnimalHandler</span><span class="p">(</span><span class="n">MongoEngineRestHandler</span><span class="p">):</span>
+    <span class="n">model</span> <span class="o">=</span> <span class="n">Animal</span>
+    <span class="n">fields</span> <span class="o">=</span> <span class="p">[]</span>
+    <span class="n">exclude</span> <span class="o">=</span> <span class="p">[]</span>
+</pre></div>
       </section>
     </div>
 
