@@ -87,7 +87,7 @@ class RestHandler(tornado.web.RequestHandler):
             data = self.get_request_data()
             self.save_instance(data)
             return self.render_list('Object added successfully.')
-        except ValidationError as e:
+        except AssertionError as e:
             # TODO: capture errors to send to form
             return self.render_edit(instance, errors=[], alert='Data sent contains some issues.')
 
@@ -97,7 +97,7 @@ class RestHandler(tornado.web.RequestHandler):
             instance = self.obj(obj_id)
             self.update_instance(instance, data)
             return self.render_list('Object updated successfully.')
-        except ValidationError as e:
+        except AssertionError as e:
             # TODO: capture errors to send to form
             return self.render_edit(instance, errors=[], alert='Data sent contains some issues.')
 
