@@ -28,7 +28,7 @@ setup(name='tornado-rest-handler',
       description='A simple Python Tornado handler that manage Rest requests automatically.',
       license='MIT',
       classifiers=[
-          'Framework :: Tornado',
+          # 'Framework :: Tornado',
           'Operating System :: OS Independent',
           'Topic :: Software Development'
       ],
