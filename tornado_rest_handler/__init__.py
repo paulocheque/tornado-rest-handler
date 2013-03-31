@@ -182,7 +182,7 @@ def routes(route_list):
 
 
 def create_internal_handler(base, model, **kwargs):
-    model_name = model.__class__.__name__
+    model_name = model.__name__
     attrs = {}
     attrs['model'] = model
     attrs['template_path'] = kwargs.get('template_path', model_name.lower() + '/')
@@ -191,7 +191,7 @@ def create_internal_handler(base, model, **kwargs):
     attrs['show_template'] = kwargs.get('show_template', 'show.html')
     attrs['redirect_pos_action'] = kwargs.get('redirect_pos_action', '/')
     handler = kwargs.get('handler', None)
-    base_name = base.__class__.__name__
+    base_name = base.__name__
     if handler:
         rest_handler = type(model_name + base_name, (handler, base), attrs)
     else:
@@ -200,7 +200,7 @@ def create_internal_handler(base, model, **kwargs):
 
 
 def rest_routes(model, **kwargs):
-    prefix = kwargs.get('prefix', model.__class__.__name__.lower())
+    prefix = kwargs.get('prefix', model.__name__.lower())
     handler = create_internal_handler(MongoEngineRestHandler, model, **kwargs)
     return [
         (r'/%s/?' % prefix, handler),
@@ -208,4 +208,3 @@ def rest_routes(model, **kwargs):
         (r'/%s/([0-9a-fA-F]{24,})/?' % prefix, handler),
         (r'/%s/([0-9a-fA-F]{24,})/(edit|delete|)/?' % prefix, handler),
     ]
-

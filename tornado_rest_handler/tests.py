@@ -43,11 +43,41 @@ class RestHandlerMetaclassTests(unittest.TestCase):
 
 class TemplatePathTests(unittest.TestCase):
     def test_default_template_path_is_blank(self):
-        self.assertEquals('', RestHandler.TEMPLATE_PATH)
-        self.assertEquals('', MongoEngineRestHandler.TEMPLATE_PATH)
+        self.assertEquals('', RestHandler.template_path)
+        self.assertEquals('', MongoEngineRestHandler.template_path)
 
     def test_default_template_path_is_the_model_name_as_lower_case(self):
         class ModelObject(object): pass
         class ValidMongoHandler(MongoEngineRestHandler):
             model = ModelObject
-        self.assertEquals('modelobject/', ValidMongoHandler.TEMPLATE_PATH)
+        self.assertEquals('modelobject/', ValidMongoHandler.template_path)
+
+
+class DynamicHandlersTests(unittest.TestCase):
+    def test_routes(self):
+        self.assertEquals([(1, 2), (3, 4)], routes([(1, 2), (3, 4)]))
+        self.assertEquals([(1, 2), (3, 4)], routes([[(1, 2), (3, 4)]]))
+        self.assertEquals([(1, 2), (5, 6), (7, 8), (3, 4)], routes([(1, 2), [(5, 6), (7, 8)], (3, 4)]))
+
+    def test_dynamic_class_requires_model_attribute(self):
+        class ModelObject(object): pass
+        cls = rest_routes(ModelObject)[0][1]
+        self.assertEquals(ModelObject, cls.model)
+
+    def test_dynamic_class_use_model_name_to_prefix(self):
+        class ModelObject(object): pass
+        prefix = rest_routes(ModelObject)[0][0]
+        self.assertEquals('/modelobject/?', prefix)
+
+    def test_dynamic_class_template_path_equal_to_model_name(self):
+        class ModelObject(object): pass
+        cls = rest_routes(ModelObject)[0][1]
+        self.assertEquals('modelobject/', cls.template_path)
+
+    def test_dynamic_class_set_default_attributes(self):
+        class ModelObject(object): pass
+        cls = rest_routes(ModelObject)[0][1]
+        self.assertEquals('list.html', cls.list_template)
+        self.assertEquals('edit.html', cls.edit_template)
+        self.assertEquals('show.html', cls.show_template)
+        self.assertEquals('/', cls.redirect_pos_action)
