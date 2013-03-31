@@ -6,12 +6,10 @@ tornado-rest-handler
 A simple Python Tornado handler that manage Rest requests automatically
 
 * [Basic Example of Usage](#basic-example-of-usage)
-  * Routes
-  * Handler implementation
-  * Templates
+  * [Routes](#routes)
+  * [Handlers](#handlers)
+  * [Templates](#templates)
 * [Installation](#installation)
-* [More Handlers](#more-handlers)
-* [Customization](#customization)
 * [Change Log](#change-log)
 * [TODO](#todo)
 
@@ -20,17 +18,18 @@ Basic Example of Usage
 
 In the current implementation, there is only one handler for MongoEngine ORM.
 
-### Routes
+Routes
+------------------------
 
 One handler for every Rest routes
 
-* GET    /animals index      display a list of all animals
-* GET    /animals/new        new return an HTML form for creating a new animal
-* POST   /animals create     create a new animal
-* GET    /animals/:id show   show an animal
-* GET    /animals/:id/edit   return an HTML form for editing a photo
-* PUT    /animals/:id        update an animal data
-* DELETE /animals/:id        delete an animal
+* GET    /animal index      display a list of all animals
+* GET    /animal/new        new return an HTML form for creating a new animal
+* POST   /animal create     create a new animal
+* GET    /animal/:id show   show an animal
+* GET    /animal/:id/edit   return an HTML form for editing a photo
+* PUT    /animal/:id        update an animal data
+* DELETE /animal/:id        delete an animal
 
 Since HTML5-forms does not support PUT/DELETE. It is possible to use the following methods too:
 
@@ -39,42 +38,34 @@ Since HTML5-forms does not support PUT/DELETE. It is possible to use the followi
 
 
 ```python
-    (r'/animals/?', AnimalHandler), # GET, POST
-    (r'/animals/new/?', AnimalHandler), # GET
-    (r'/animals/([0-9a-fA-F]{24,})/?', AnimalHandler), # GET, POST, PUT, DELETE
-    (r'/animals/([0-9a-fA-F]{24,})/(edit|delete)/?', AnimalHandler), # GET, POST
+from tornado_rest_handler import routes, rest_routes
+
+application = tornado.web.Application(routes([
+    # another handlers here
+
+    rest_routes(Animal),
+
+    # another handlers here
+]))
 ```
 
 
-### Handler implementation
+Handlers
+------------------------
 
-All the get/post/put/delete methods are implemented for you. Simple as that:
+All the get/post/put/delete methods are implemented for you, but if you want to customize some behavior, you write your own handler:
 
 ```python
-from tornardo_rest_handler import MongoEngineRestHandler
-
-class AnimalHandler(MongoEngineRestHandler):
-    model = Animal
+class AnimalHandler(tornado.web.RequestHandler):
+    pass # your custom methods here
 ```
 
-### Templates
+And then, registered it:
 
-You must create your own template. It must have the names list.html, show.html and edit.html.
-
-* animal/list.html
-* animal/show.html
-* animal/edit.html
-
-By default, the directory is the model name in lower case. You may change the directory though:
-
-```python
-class AnimalHandler(MongoEngineRestHandler):
-    model = Animal
-    template_path = 'my_dir'
+application = tornado.web.Application(routes([
+    rest_routes(Animal, handler=AnimalHandler),
+]))
 ```
-
-More Handlers
--------------
 
 To create a RestHandler for your ORM you must override the RestHandler class and implement the following methods:
 
@@ -87,26 +78,34 @@ class CouchDBRestHandler(RestHandler):
     def delete_instance(self, obj): pass
 ```
 
-Customization
--------------
-
 By default, the list page will show all models of that type. To filter by user or other properties, override the instance_list method:
 
 ```python
-class AnimalHandler(MongoEngineRestHandler):
-    model = Animal
-
+class AnimalHandler(tornado.web.RequestHandler):
     def instance_list(self):
         return Animal.objects.filter(...)
 ```
 
-To change the template names, override the following variables:
+
+Templates
+------------------------
+
+You must create your own template. It must have the names list.html, show.html and edit.html.
 
 ```python
-class AnimalHandler(MongoEngineRestHandler):
-    LIST_TEMPLATE = 'list.html'
-    EDIT_TEMPLATE = 'edit.html'
-    SHOW_TEMPLATE = 'show.html'
+rest_routes(Animal, list_tempalte='...', edit_template='...', show_template='...'),
+```
+
+By default, the directory is the model name in lower case (animal in the example).
+
+* animal/list.html
+* animal/show.html
+* animal/edit.html
+
+But you may change the directory though:
+
+```python
+rest_routes(Animal, template_path='your_template_path'),
 ```
 
 
@@ -134,7 +133,7 @@ pip install -e git+git@github.com:paulocheque/tornado-rest-handler.git#egg=torna
 #### requirements.txt
 
 ```
-tornado-rest-handler==0.0.2
+tornado-rest-handler==0.0.3
 # or use the development version
 git+git://github.com/paulocheque/tornado-rest-handler.git#egg=tornado-rest-handler
 ```
@@ -153,6 +152,18 @@ pip install tornado-rest-handler --upgrade --no-deps
 
 Change Log
 -------------
+
+#### 0.0.3 (2013/03/31)
+* [new] CrudHandler extracted from RestHandler.
+* [new] Dynamic handlers with dynamic routes (rest_routes function).
+* [new] New redirect_pos_action attribute.
+* [new] Function routes added to facilitate routes integration.
+* [new] Method raise403 useful method in the handler.
+* [update] All attributes are now in lower case.
+* [update] Stronger uri discover algoritihm.
+* [update] Using only AssertionError exceptions.
+* [bugfix] Using redirects instead of rendering after actions.
+
 
 #### 0.0.2 (2013/03/30)
 * [update] RestHandler adapted to be used for other ORMs.
@@ -174,12 +185,6 @@ TODO
 * Pagination
 * Send valiation errors to forms
 * i18n
-* redirect instead of render for successffull actions.
 * Use fields and exclude to facilitate auto-generate forms:
-
-```python
-class AnimalHandler(MongoEngineRestHandler):
-    model = Animal
-    fields = []
-    exclude = []
-```
+* plurarize
+* splitted handlers
