@@ -2,6 +2,7 @@
 import re
 
 import tornado.web
+import tornado.util
 
 
 class CrudHandlerMetaclass(type):
@@ -71,7 +72,8 @@ class CrudHandler(tornado.web.RequestHandler):
             return self.redirect_with_message(message='Object added successfully.')
         except AssertionError as e:
             # TODO: capture errors to send to form
-            instance = self.model(**data)
+            instance = tornado.util.ObjectDict()
+            instance.update(**data)
             return self.page_edit(instance, errors=[], alert='Data sent contains some issues.')
 
     def action_read(self, model_id, fail_silently=False):
