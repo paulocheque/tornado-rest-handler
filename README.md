@@ -45,13 +45,17 @@ One handler manage every Rest routes:
 ```python
 from tornado_rest_handler import routes, rest_routes
 
-application = tornado.web.Application(routes([
+TORNADO_ROUTES = [
     # another handlers here
 
     rest_routes(Animal),
 
     # another handlers here
-]))
+]
+
+TORNADO_SETTINGS = {}
+
+application = tornado.web.Application(routes(TORNADO_ROUTES), **TORNADO_SETTINGS)
 ```
 
 The library does not support auto-plurazation yet, so you may want to change the prefix:
