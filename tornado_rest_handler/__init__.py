@@ -60,17 +60,18 @@ class CrudHandler(tornado.web.RequestHandler):
 
     def redirect_with_message(self, message=None):
         if self.redirect_pos_action:
-            self.redirect(redirect_pos_action)
+            self.redirect(self.redirect_pos_action)
         else:
             self.redirect('/')
 
     def action_create(self):
+        data = self.get_request_data()
         try:
-            data = self.get_request_data()
             self.save_instance(data)
             return self.redirect_with_message(message='Object added successfully.')
         except AssertionError as e:
             # TODO: capture errors to send to form
+            instance = self.model(**data)
             return self.page_edit(instance, errors=[], alert='Data sent contains some issues.')
 
     def action_read(self, model_id, fail_silently=False):
@@ -82,9 +83,9 @@ class CrudHandler(tornado.web.RequestHandler):
             self.raise404()
 
     def action_update(self, model_id):
+        data = self.get_request_data()
+        instance = self.action_read(model_id)
         try:
-            data = self.get_request_data()
-            instance = self.action_read(model_id)
             self.update_instance(instance, data)
             return self.redirect_with_message(message='Object updated successfully.')
         except AssertionError as e:
@@ -168,4 +169,43 @@ class MongoEngineRestHandler(RestHandler):
 
     def delete_instance(self, instance):
         instance.delete()
+
+
+def routes(route_list):
+    routes = []
+    for route in route_list:
+        if isinstance(route, list):
+            routes.extend(route)
+        else:
+            routes.append(route)
+    return routes
+
+
+def create_internal_handler(base, model, **kwargs):
+    model_name = model.__class__.__name__
+    attrs = {}
+    attrs['model'] = model
+    attrs['template_path'] = kwargs.get('template_path', model_name.lower() + '/')
+    attrs['list_template'] = kwargs.get('list_template', 'list.html')
+    attrs['edit_template'] = kwargs.get('edit_template', 'edit.html')
+    attrs['show_template'] = kwargs.get('show_template', 'show.html')
+    attrs['redirect_pos_action'] = kwargs.get('redirect_pos_action', '/')
+    handler = kwargs.get('handler', None)
+    base_name = base.__class__.__name__
+    if handler:
+        rest_handler = type(model_name + base_name, (handler, base), attrs)
+    else:
+        rest_handler = type(model_name + base_name, (base,), attrs)
+    return rest_handler
+
+
+def rest_routes(model, **kwargs):
+    prefix = kwargs.get('prefix', model.__class__.__name__.lower())
+    handler = create_internal_handler(MongoEngineRestHandler, model, **kwargs)
+    return [
+        (r'/%s/?' % prefix, handler),
+        (r'/%s/new/?' % prefix, handler),
+        (r'/%s/([0-9a-fA-F]{24,})/?' % prefix, handler),
+        (r'/%s/([0-9a-fA-F]{24,})/(edit|delete|)/?' % prefix, handler),
+    ]
 
