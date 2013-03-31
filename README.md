@@ -16,7 +16,9 @@ A simple Python Tornado handler that manage Rest requests automatically
 Basic Example of Usage
 ------------------------
 
-In the current implementation, there is only one handler for MongoEngine ORM.
+In the current implementation, there is only one handler for MongoEngine ORM, besides the library does not depends on the MongoEngine!
+
+With +-10 lines of code you can create a handler for your ORM.
 
 Routes
 ------------------------
