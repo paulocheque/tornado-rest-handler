@@ -51,13 +51,23 @@ class CrudHandler(tornado.web.RequestHandler):
         self.render(self.list_template, objs=self.instance_list(), alert=alert)
 
     def page_new(self):
-        self.render(self.edit_template, obj=None, errors=[], alert=None)
+        self.page_edit(None)
 
     def page_show(self, instance):
         self.render(self.show_template, obj=instance)
 
-    def page_edit(self, instance, errors=[], alert=None):
-        self.render(self.edit_template, obj=instance, errors=errors, alert=alert)
+    def page_edit(self, instance, exception=None, alert=None):
+        errors = None
+        if exception:
+            alert = 'Data sent contains some issues.'
+            errors = tornado.util.ObjectDict()
+            if hasattr(exception, 'to_dict'):
+                errors.update(**exception.to_dict())
+        value_for = lambda field: getattr(instance, field, '')
+        has_error = lambda field: errors and field in errors.keys()
+        error_for = lambda field: errors[field] if errors and field in errors else ''
+        self.render(self.edit_template, obj=instance, errors=errors, alert=alert,
+                    value_for=value_for, has_error=has_error, error_for=error_for)
 
     def redirect_with_message(self, message=None):
         if self.redirect_pos_action:
@@ -71,10 +81,9 @@ class CrudHandler(tornado.web.RequestHandler):
             self.save_instance(data)
             return self.redirect_with_message(message='Object added successfully.')
         except AssertionError as e:
-            # TODO: capture errors to send to form
             instance = tornado.util.ObjectDict()
             instance.update(**data)
-            return self.page_edit(instance, errors=[], alert='Data sent contains some issues.')
+            return self.page_edit(instance, exception=e)
 
     def action_read(self, model_id, fail_silently=False):
         try:
@@ -91,8 +100,7 @@ class CrudHandler(tornado.web.RequestHandler):
             self.update_instance(instance, data)
             return self.redirect_with_message(message='Object updated successfully.')
         except AssertionError as e:
-            # TODO: capture errors to send to form
-            return self.page_edit(instance, errors=[], alert='Data sent contains some issues.')
+            return self.page_edit(instance, exception=e)
 
     def action_delete(self, model_id):
         instance = self.action_read(model_id)
