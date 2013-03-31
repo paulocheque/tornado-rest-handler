@@ -49,6 +49,13 @@ application = tornado.web.Application(routes([
 ]))
 ```
 
+The library does not support auto-plurazation yet, so you may want to change the prefix:
+
+```python
+application = tornado.web.Application(routes([
+    rest_routes(Animal, prefix='animals'),
+]))
+```
 
 Handlers
 ------------------------
@@ -62,6 +69,7 @@ class AnimalHandler(tornado.web.RequestHandler):
 
 And then, registered it:
 
+```python
 application = tornado.web.Application(routes([
     rest_routes(Animal, handler=AnimalHandler),
 ]))
@@ -90,13 +98,13 @@ class AnimalHandler(tornado.web.RequestHandler):
 Templates
 ------------------------
 
-You must create your own template. It must have the names list.html, show.html and edit.html.
+You must create your own template. It must have the names list.html, show.html and edit.html. But you can customize if you want to:
 
 ```python
-rest_routes(Animal, list_tempalte='...', edit_template='...', show_template='...'),
+rest_routes(Animal, list_tempalte='another_name.html', edit_template='...', show_template='...'),
 ```
 
-By default, the directory is the model name in lower case (animal in the example).
+By default, the directory is the model name in lower case (animal in this example).
 
 * animal/list.html
 * animal/show.html
