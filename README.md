@@ -61,17 +61,13 @@ application = tornado.web.Application(routes(TORNADO_ROUTES), **TORNADO_SETTINGS
 The library does not support auto-plurazation yet, so you may want to change the prefix:
 
 ```python
-application = tornado.web.Application(routes([
-    rest_routes(Animal, prefix='animals'),
-]))
+rest_routes(Animal, prefix='animals'),
 ```
 
 You can also define to where will be redirect after an action succeed:
 
 ```python
-application = tornado.web.Application(routes([
-    rest_routes(Animal, prefix='animals', redirect_pos_action='/animals'),
-]))
+rest_routes(Animal, prefix='animals', redirect_pos_action='/animals'),
 ```
 
 Handlers
@@ -87,9 +83,7 @@ class AnimalHandler(tornado.web.RequestHandler):
 And then, registered it:
 
 ```python
-application = tornado.web.Application(routes([
-    rest_routes(Animal, handler=AnimalHandler),
-]))
+rest_routes(Animal, handler=AnimalHandler),
 ```
 
 To create a RestHandler for your ORM you must override the RestHandler class and implement the following methods:
