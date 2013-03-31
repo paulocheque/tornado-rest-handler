@@ -117,12 +117,12 @@ class AnimalHandler(tornado.web.RequestHandler):
 Templates
 ------------------------
 
-You must create your own template. Tempaltes will receive the variables **obj** or **objs** and **alert** in case there is some message.
+You must create your own template. Templates will receive the variables **obj** or **objs** and **alert** in case there is some message.
 
 It must have the names list.html, show.html and edit.html. But you can customize if you want to:
 
 ```python
-rest_routes(Animal, list_tempalte='another_name.html', edit_template='...', show_template='...'),
+rest_routes(Animal, list_template='another_name.html', edit_template='...', show_template='...'),
 ```
 
 By default, the directory is the model name in lower case (animal in this example).
