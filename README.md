@@ -23,20 +23,23 @@ With +-10 lines of code you can create a handler for your ORM.
 Routes
 ------------------------
 
-One handler for every Rest routes
+One handler manage every Rest routes:
 
-* GET    /animal index      display a list of all animals
-* GET    /animal/new        new return an HTML form for creating a new animal
-* POST   /animal create     create a new animal
-* GET    /animal/:id show   show an animal
-* GET    /animal/:id/edit   return an HTML form for editing a photo
-* PUT    /animal/:id        update an animal data
-* DELETE /animal/:id        delete an animal
+| Method       | route               | comment |
+|------------- |---------------------|---------|
+| GET          | /animal index       | display a list of all animals |
+| GET          | /animal/new         | new return an HTML form for creating a new animal |
+| POST         | /animal create      | create a new animal |
+| GET          | /animal/:id show    | show an animal |
+| GET          | /animal/:id/edit    | return an HTML form for editing a photo |
+| PUT          | /animal/:id         | update an animal data |
+| DELETE       | /animal/:id         | delete an animal |
+| POST*        | /animals/:id/delete | same as DELETE /animals/:id |
+| POST*        | /animals/:id        | same as PUT /animals/:id |
+ 
+* *Since HTML5-forms does not support PUT/DELETE. It is possible to use the following methods too:
 
-Since HTML5-forms does not support PUT/DELETE. It is possible to use the following methods too:
 
-* POST /animals/:id/delete   Same as DELETE /animals/:id
-* POST /animals/:id          Same as PUT    /animals/:id
 
 
 ```python
@@ -56,6 +59,14 @@ The library does not support auto-plurazation yet, so you may want to change the
 ```python
 application = tornado.web.Application(routes([
     rest_routes(Animal, prefix='animals'),
+]))
+```
+
+You can also define to where will be redirect after an action succeed:
+
+```python
+application = tornado.web.Application(routes([
+    rest_routes(Animal, prefix='animals', redirect_pos_action='/animals'),
 ]))
 ```
 
@@ -80,7 +91,7 @@ application = tornado.web.Application(routes([
 To create a RestHandler for your ORM you must override the RestHandler class and implement the following methods:
 
 ```python
-class CouchDBRestHandler(RestHandler):
+class CouchDBRestHandler(tornado.web.RequestHandler):
     def instance_list(self): return [] # it can return a list or a queryset etc
     def find_instance_by_id(self, obj_id): pass
     def save_instance(self, obj): pass
@@ -88,7 +99,7 @@ class CouchDBRestHandler(RestHandler):
     def delete_instance(self, obj): pass
 ```
 
-By default, the list page will show all models of that type. To filter by user or other properties, override the instance_list method:
+By default, the list page will show all models of that type. To filter by user or other properties, override the *instance_list* method:
 
 ```python
 class AnimalHandler(tornado.web.RequestHandler):
