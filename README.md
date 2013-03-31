@@ -3,7 +3,7 @@ tornado-rest-handler
 
 ![Continuous Integration Status](https://secure.travis-ci.org/paulocheque/tornado-rest-handler.png)
 
-A simple Python Tornado handler that manage Rest requests automatically
+A simple Python Tornado handler that manage Rest requests automatically.
 
 * [Basic Example of Usage](#basic-example-of-usage)
   * [Routes](#routes)
@@ -29,8 +29,8 @@ One handler manage every Rest routes:
 |------------- |---------------------|---------|
 | GET          | /animal index       | display a list of all animals |
 | GET          | /animal/new         | new return an HTML form for creating a new animal |
-| POST         | /animal create      | create a new animal |
-| GET          | /animal/:id show    | show an animal |
+| POST         | /animal             | create a new animal |
+| GET          | /animal/:id         | show an animal |
 | GET          | /animal/:id/edit    | return an HTML form for editing a photo |
 | PUT          | /animal/:id         | update an animal data |
 | DELETE       | /animal/:id         | delete an animal |
@@ -91,7 +91,9 @@ application = tornado.web.Application(routes([
 To create a RestHandler for your ORM you must override the RestHandler class and implement the following methods:
 
 ```python
-class CouchDBRestHandler(tornado.web.RequestHandler):
+from tornado_rest_handler import RestHandler
+
+class CouchDBRestHandler(RestHandler):
     def instance_list(self): return [] # it can return a list or a queryset etc
     def find_instance_by_id(self, obj_id): pass
     def save_instance(self, obj): pass
