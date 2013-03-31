@@ -42,69 +42,69 @@
 <a href="#basic-example-of-usage">Basic Example of Usage</a>
 
 <ul>
-<li>Routes</li>
-<li>Handler implementation</li>
-<li>Templates</li>
+<li><a href="#routes">Routes</a></li>
+<li><a href="#handlers">Handlers</a></li>
+<li><a href="#templates">Templates</a></li>
 </ul>
 </li>
 <li><a href="#installation">Installation</a></li>
-<li><a href="#more-handlers">More Handlers</a></li>
-<li><a href="#customization">Customization</a></li>
 <li><a href="#change-log">Change Log</a></li>
 <li><a href="#todo">TODO</a></li>
 </ul><h2>Basic Example of Usage</h2>
 
-<p>In the current implementation, there is only one handler for MongoEngine ORM.</p>
+<p>In the current implementation, there is only one handler for MongoEngine ORM, besides the library does not depends on the MongoEngine!</p>
 
-<h3>Routes</h3>
+<p>With +-10 lines of code you can create a handler for your ORM.</p>
+
+<h2>Routes</h2>
 
 <p>One handler for every Rest routes</p>
 
 <ul>
-<li>GET    /animals index      display a list of all animals</li>
-<li>GET    /animals/new        new return an HTML form for creating a new animal</li>
-<li>POST   /animals create     create a new animal</li>
-<li>GET    /animals/:id show   show an animal</li>
-<li>GET    /animals/:id/edit   return an HTML form for editing a photo</li>
-<li>PUT    /animals/:id        update an animal data</li>
-<li>DELETE /animals/:id        delete an animal</li>
+<li>GET    /animal index      display a list of all animals</li>
+<li>GET    /animal/new        new return an HTML form for creating a new animal</li>
+<li>POST   /animal create     create a new animal</li>
+<li>GET    /animal/:id show   show an animal</li>
+<li>GET    /animal/:id/edit   return an HTML form for editing a photo</li>
+<li>PUT    /animal/:id        update an animal data</li>
+<li>DELETE /animal/:id        delete an animal</li>
 </ul><p>Since HTML5-forms does not support PUT/DELETE. It is possible to use the following methods too:</p>
 
 <ul>
 <li>POST /animals/:id/delete   Same as DELETE /animals/:id</li>
 <li>POST /animals/:id          Same as PUT    /animals/:id</li>
-</ul><div class="highlight"><pre>    <span class="p">(</span><span class="s">r'/animals/?'</span><span class="p">,</span> <span class="n">AnimalHandler</span><span class="p">),</span> <span class="c"># GET, POST</span>
-    <span class="p">(</span><span class="s">r'/animals/new/?'</span><span class="p">,</span> <span class="n">AnimalHandler</span><span class="p">),</span> <span class="c"># GET</span>
-    <span class="p">(</span><span class="s">r'/animals/([0-9a-fA-F]{24,})/?'</span><span class="p">,</span> <span class="n">AnimalHandler</span><span class="p">),</span> <span class="c"># GET, POST, PUT, DELETE</span>
-    <span class="p">(</span><span class="s">r'/animals/([0-9a-fA-F]{24,})/(edit|delete)/?'</span><span class="p">,</span> <span class="n">AnimalHandler</span><span class="p">),</span> <span class="c"># GET, POST</span>
+</ul><div class="highlight"><pre><span class="kn">from</span> <span class="nn">tornado_rest_handler</span> <span class="kn">import</span> <span class="n">routes</span><span class="p">,</span> <span class="n">rest_routes</span>
+
+<span class="n">application</span> <span class="o">=</span> <span class="n">tornado</span><span class="o">.</span><span class="n">web</span><span class="o">.</span><span class="n">Application</span><span class="p">(</span><span class="n">routes</span><span class="p">([</span>
+    <span class="c"># another handlers here</span>
+
+    <span class="n">rest_routes</span><span class="p">(</span><span class="n">Animal</span><span class="p">),</span>
+
+    <span class="c"># another handlers here</span>
+<span class="p">]))</span>
 </pre></div>
 
-<h3>Handler implementation</h3>
+<p>The library does not support auto-plurazation yet, so you may want to change the prefix:</p>
 
-<p>All the get/post/put/delete methods are implemented for you. Simple as that:</p>
-
-<div class="highlight"><pre><span class="kn">from</span> <span class="nn">tornardo_rest_handler</span> <span class="kn">import</span> <span class="n">MongoEngineRestHandler</span>
-
-<span class="k">class</span> <span class="nc">AnimalHandler</span><span class="p">(</span><span class="n">MongoEngineRestHandler</span><span class="p">):</span>
-    <span class="n">model</span> <span class="o">=</span> <span class="n">Animal</span>
+<div class="highlight"><pre><span class="n">application</span> <span class="o">=</span> <span class="n">tornado</span><span class="o">.</span><span class="n">web</span><span class="o">.</span><span class="n">Application</span><span class="p">(</span><span class="n">routes</span><span class="p">([</span>
+    <span class="n">rest_routes</span><span class="p">(</span><span class="n">Animal</span><span class="p">,</span> <span class="n">prefix</span><span class="o">=</span><span class="s">'animals'</span><span class="p">),</span>
+<span class="p">]))</span>
 </pre></div>
 
-<h3>Templates</h3>
+<h2>Handlers</h2>
 
-<p>You must create your own template. It must have the names list.html, show.html and edit.html.</p>
+<p>All the get/post/put/delete methods are implemented for you, but if you want to customize some behavior, you write your own handler:</p>
 
-<ul>
-<li>animal/list.html</li>
-<li>animal/show.html</li>
-<li>animal/edit.html</li>
-</ul><p>By default, the directory is the model name in lower case. You may change the directory though:</p>
-
-<div class="highlight"><pre><span class="k">class</span> <span class="nc">AnimalHandler</span><span class="p">(</span><span class="n">MongoEngineRestHandler</span><span class="p">):</span>
-    <span class="n">model</span> <span class="o">=</span> <span class="n">Animal</span>
-    <span class="n">template_path</span> <span class="o">=</span> <span class="s">'my_dir'</span>
+<div class="highlight"><pre><span class="k">class</span> <span class="nc">AnimalHandler</span><span class="p">(</span><span class="n">tornado</span><span class="o">.</span><span class="n">web</span><span class="o">.</span><span class="n">RequestHandler</span><span class="p">):</span>
+    <span class="k">pass</span> <span class="c"># your custom methods here</span>
 </pre></div>
 
-<h2>More Handlers</h2>
+<p>And then, registered it:</p>
+
+<div class="highlight"><pre><span class="n">application</span> <span class="o">=</span> <span class="n">tornado</span><span class="o">.</span><span class="n">web</span><span class="o">.</span><span class="n">Application</span><span class="p">(</span><span class="n">routes</span><span class="p">([</span>
+    <span class="n">rest_routes</span><span class="p">(</span><span class="n">Animal</span><span class="p">,</span> <span class="n">handler</span><span class="o">=</span><span class="n">AnimalHandler</span><span class="p">),</span>
+<span class="p">]))</span>
+</pre></div>
 
 <p>To create a RestHandler for your ORM you must override the RestHandler class and implement the following methods:</p>
 
@@ -116,23 +116,31 @@
     <span class="k">def</span> <span class="nf">delete_instance</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">obj</span><span class="p">):</span> <span class="k">pass</span>
 </pre></div>
 
-<h2>Customization</h2>
-
 <p>By default, the list page will show all models of that type. To filter by user or other properties, override the instance_list method:</p>
 
-<div class="highlight"><pre><span class="k">class</span> <span class="nc">AnimalHandler</span><span class="p">(</span><span class="n">MongoEngineRestHandler</span><span class="p">):</span>
-    <span class="n">model</span> <span class="o">=</span> <span class="n">Animal</span>
-
+<div class="highlight"><pre><span class="k">class</span> <span class="nc">AnimalHandler</span><span class="p">(</span><span class="n">tornado</span><span class="o">.</span><span class="n">web</span><span class="o">.</span><span class="n">RequestHandler</span><span class="p">):</span>
     <span class="k">def</span> <span class="nf">instance_list</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
         <span class="k">return</span> <span class="n">Animal</span><span class="o">.</span><span class="n">objects</span><span class="o">.</span><span class="n">filter</span><span class="p">(</span><span class="o">...</span><span class="p">)</span>
 </pre></div>
 
-<p>To change the template names, override the following variables:</p>
+<h2>Templates</h2>
 
-<div class="highlight"><pre><span class="k">class</span> <span class="nc">AnimalHandler</span><span class="p">(</span><span class="n">MongoEngineRestHandler</span><span class="p">):</span>
-    <span class="n">LIST_TEMPLATE</span> <span class="o">=</span> <span class="s">'list.html'</span>
-    <span class="n">EDIT_TEMPLATE</span> <span class="o">=</span> <span class="s">'edit.html'</span>
-    <span class="n">SHOW_TEMPLATE</span> <span class="o">=</span> <span class="s">'show.html'</span>
+<p>You must create your own template. Tempaltes will receive the variables <strong>obj</strong> or <strong>objs</strong> and <strong>alert</strong> in case there is some message.</p>
+
+<p>It must have the names list.html, show.html and edit.html. But you can customize if you want to:</p>
+
+<div class="highlight"><pre><span class="n">rest_routes</span><span class="p">(</span><span class="n">Animal</span><span class="p">,</span> <span class="n">list_tempalte</span><span class="o">=</span><span class="s">'another_name.html'</span><span class="p">,</span> <span class="n">edit_template</span><span class="o">=</span><span class="s">'...'</span><span class="p">,</span> <span class="n">show_template</span><span class="o">=</span><span class="s">'...'</span><span class="p">),</span>
+</pre></div>
+
+<p>By default, the directory is the model name in lower case (animal in this example).</p>
+
+<ul>
+<li>animal/list.html</li>
+<li>animal/show.html</li>
+<li>animal/edit.html</li>
+</ul><p>But you may change the directory though:</p>
+
+<div class="highlight"><pre><span class="n">rest_routes</span><span class="p">(</span><span class="n">Animal</span><span class="p">,</span> <span class="n">template_path</span><span class="o">=</span><span class="s">'your_template_path'</span><span class="p">),</span>
 </pre></div>
 
 <h2>Installation</h2>
@@ -154,7 +162,7 @@
 
 <h4>requirements.txt</h4>
 
-<pre><code>tornado-rest-handler==0.0.2
+<pre><code>tornado-rest-handler==0.0.3
 # or use the development version
 git+git://github.com/paulocheque/tornado-rest-handler.git#egg=tornado-rest-handler
 </code></pre>
@@ -171,7 +179,19 @@ git+git://github.com/paulocheque/tornado-rest-handler.git#egg=tornado-rest-handl
 <li>Tested with Tornado 2.4.1</li>
 </ul><h2>Change Log</h2>
 
-<h4>0.0.2 (2013/03/30)</h4>
+<h4>0.0.3 (2013/03/31)</h4>
+
+<ul>
+<li>[new] CrudHandler extracted from RestHandler.</li>
+<li>[new] Dynamic handlers with dynamic routes (rest_routes function).</li>
+<li>[new] New redirect_pos_action attribute.</li>
+<li>[new] Function routes added to facilitate routes integration.</li>
+<li>[new] Method raise403 useful method in the handler.</li>
+<li>[update] All attributes are now in lower case.</li>
+<li>[update] Stronger uri discover algoritihm.</li>
+<li>[update] Using only AssertionError exceptions.</li>
+<li>[bugfix] Using redirects instead of rendering after actions.</li>
+</ul><h4>0.0.2 (2013/03/30)</h4>
 
 <ul>
 <li>[update] RestHandler adapted to be used for other ORMs.</li>
@@ -191,13 +211,10 @@ git+git://github.com/paulocheque/tornado-rest-handler.git#egg=tornado-rest-handl
 <li>Pagination</li>
 <li>Send valiation errors to forms</li>
 <li>i18n</li>
-<li>redirect instead of render for successffull actions.</li>
 <li>Use fields and exclude to facilitate auto-generate forms:</li>
-</ul><div class="highlight"><pre><span class="k">class</span> <span class="nc">AnimalHandler</span><span class="p">(</span><span class="n">MongoEngineRestHandler</span><span class="p">):</span>
-    <span class="n">model</span> <span class="o">=</span> <span class="n">Animal</span>
-    <span class="n">fields</span> <span class="o">=</span> <span class="p">[]</span>
-    <span class="n">exclude</span> <span class="o">=</span> <span class="p">[]</span>
-</pre></div>
+<li>plurarize</li>
+<li>splitted handlers</li>
+</ul>
       </section>
     </div>
 
