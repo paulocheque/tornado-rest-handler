@@ -25,7 +25,7 @@ Routes
 
 One handler manage every Rest routes:
 
-| Method       | route               | comment |
+| Method       | Route               | Comment |
 |------------- |---------------------|---------|
 | GET          | /animal index       | display a list of all animals |
 | GET          | /animal/new         | new return an HTML form for creating a new animal |
