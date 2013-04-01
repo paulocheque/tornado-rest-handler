@@ -35,7 +35,7 @@
 
 <p><img src="https://secure.travis-ci.org/paulocheque/tornado-rest-handler.png" alt="Continuous Integration Status"></p>
 
-<p>A simple Python Tornado handler that manage Rest requests automatically</p>
+<p>A simple Python Tornado handler that manage Rest requests automatically.</p>
 
 <ul>
 <li>
@@ -58,37 +58,84 @@
 
 <h2>Routes</h2>
 
-<p>One handler for every Rest routes</p>
+<p>One handler manage every Rest routes:</p>
 
-<ul>
-<li>GET    /animal index      display a list of all animals</li>
-<li>GET    /animal/new        new return an HTML form for creating a new animal</li>
-<li>POST   /animal create     create a new animal</li>
-<li>GET    /animal/:id show   show an animal</li>
-<li>GET    /animal/:id/edit   return an HTML form for editing a photo</li>
-<li>PUT    /animal/:id        update an animal data</li>
-<li>DELETE /animal/:id        delete an animal</li>
-</ul><p>Since HTML5-forms does not support PUT/DELETE. It is possible to use the following methods too:</p>
-
-<ul>
-<li>POST /animals/:id/delete   Same as DELETE /animals/:id</li>
-<li>POST /animals/:id          Same as PUT    /animals/:id</li>
+<table>
+<tr>
+<th>Method</th>
+<th>Route</th>
+<th>Comment</th>
+</tr>
+<tr>
+<td>GET</td>
+<td>/animal index</td>
+<td>display a list of all animals</td>
+</tr>
+<tr>
+<td>GET</td>
+<td>/animal/new</td>
+<td>new return an HTML form for creating a new animal</td>
+</tr>
+<tr>
+<td>POST</td>
+<td>/animal</td>
+<td>create a new animal</td>
+</tr>
+<tr>
+<td>GET</td>
+<td>/animal/:id</td>
+<td>show an animal</td>
+</tr>
+<tr>
+<td>GET</td>
+<td>/animal/:id/edit</td>
+<td>return an HTML form for editing a photo</td>
+</tr>
+<tr>
+<td>PUT</td>
+<td>/animal/:id</td>
+<td>update an animal data</td>
+</tr>
+<tr>
+<td>DELETE</td>
+<td>/animal/:id</td>
+<td>delete an animal</td>
+</tr>
+<tr>
+<td>POST*</td>
+<td>/animals/:id/delete</td>
+<td>same as DELETE /animals/:id</td>
+</tr>
+<tr>
+<td>POST*</td>
+<td>/animals/:id</td>
+<td>same as PUT /animals/:id</td>
+</tr>
+</table><ul>
+<li>*Since HTML5-forms does not support PUT/DELETE. It is possible to use the following methods too:</li>
 </ul><div class="highlight"><pre><span class="kn">from</span> <span class="nn">tornado_rest_handler</span> <span class="kn">import</span> <span class="n">routes</span><span class="p">,</span> <span class="n">rest_routes</span>
 
-<span class="n">application</span> <span class="o">=</span> <span class="n">tornado</span><span class="o">.</span><span class="n">web</span><span class="o">.</span><span class="n">Application</span><span class="p">(</span><span class="n">routes</span><span class="p">([</span>
+<span class="n">TORNADO_ROUTES</span> <span class="o">=</span> <span class="p">[</span>
     <span class="c"># another handlers here</span>
 
     <span class="n">rest_routes</span><span class="p">(</span><span class="n">Animal</span><span class="p">),</span>
 
     <span class="c"># another handlers here</span>
-<span class="p">]))</span>
+<span class="p">]</span>
+
+<span class="n">TORNADO_SETTINGS</span> <span class="o">=</span> <span class="p">{}</span>
+
+<span class="n">application</span> <span class="o">=</span> <span class="n">tornado</span><span class="o">.</span><span class="n">web</span><span class="o">.</span><span class="n">Application</span><span class="p">(</span><span class="n">routes</span><span class="p">(</span><span class="n">TORNADO_ROUTES</span><span class="p">),</span> <span class="o">**</span><span class="n">TORNADO_SETTINGS</span><span class="p">)</span>
 </pre></div>
 
 <p>The library does not support auto-plurazation yet, so you may want to change the prefix:</p>
 
-<div class="highlight"><pre><span class="n">application</span> <span class="o">=</span> <span class="n">tornado</span><span class="o">.</span><span class="n">web</span><span class="o">.</span><span class="n">Application</span><span class="p">(</span><span class="n">routes</span><span class="p">([</span>
-    <span class="n">rest_routes</span><span class="p">(</span><span class="n">Animal</span><span class="p">,</span> <span class="n">prefix</span><span class="o">=</span><span class="s">'animals'</span><span class="p">),</span>
-<span class="p">]))</span>
+<div class="highlight"><pre><span class="n">rest_routes</span><span class="p">(</span><span class="n">Animal</span><span class="p">,</span> <span class="n">prefix</span><span class="o">=</span><span class="s">'animals'</span><span class="p">),</span>
+</pre></div>
+
+<p>You can also define to where will be redirect after an action succeed:</p>
+
+<div class="highlight"><pre><span class="n">rest_routes</span><span class="p">(</span><span class="n">Animal</span><span class="p">,</span> <span class="n">prefix</span><span class="o">=</span><span class="s">'animals'</span><span class="p">,</span> <span class="n">redirect_pos_action</span><span class="o">=</span><span class="s">'/animals'</span><span class="p">),</span>
 </pre></div>
 
 <h2>Handlers</h2>
@@ -101,14 +148,14 @@
 
 <p>And then, registered it:</p>
 
-<div class="highlight"><pre><span class="n">application</span> <span class="o">=</span> <span class="n">tornado</span><span class="o">.</span><span class="n">web</span><span class="o">.</span><span class="n">Application</span><span class="p">(</span><span class="n">routes</span><span class="p">([</span>
-    <span class="n">rest_routes</span><span class="p">(</span><span class="n">Animal</span><span class="p">,</span> <span class="n">handler</span><span class="o">=</span><span class="n">AnimalHandler</span><span class="p">),</span>
-<span class="p">]))</span>
+<div class="highlight"><pre><span class="n">rest_routes</span><span class="p">(</span><span class="n">Animal</span><span class="p">,</span> <span class="n">handler</span><span class="o">=</span><span class="n">AnimalHandler</span><span class="p">),</span>
 </pre></div>
 
 <p>To create a RestHandler for your ORM you must override the RestHandler class and implement the following methods:</p>
 
-<div class="highlight"><pre><span class="k">class</span> <span class="nc">CouchDBRestHandler</span><span class="p">(</span><span class="n">RestHandler</span><span class="p">):</span>
+<div class="highlight"><pre><span class="kn">from</span> <span class="nn">tornado_rest_handler</span> <span class="kn">import</span> <span class="n">RestHandler</span>
+
+<span class="k">class</span> <span class="nc">CouchDBRestHandler</span><span class="p">(</span><span class="n">RestHandler</span><span class="p">):</span>
     <span class="k">def</span> <span class="nf">instance_list</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span> <span class="k">return</span> <span class="p">[]</span> <span class="c"># it can return a list or a queryset etc</span>
     <span class="k">def</span> <span class="nf">find_instance_by_id</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">obj_id</span><span class="p">):</span> <span class="k">pass</span>
     <span class="k">def</span> <span class="nf">save_instance</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">obj</span><span class="p">):</span> <span class="k">pass</span>
@@ -116,7 +163,7 @@
     <span class="k">def</span> <span class="nf">delete_instance</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">obj</span><span class="p">):</span> <span class="k">pass</span>
 </pre></div>
 
-<p>By default, the list page will show all models of that type. To filter by user or other properties, override the instance_list method:</p>
+<p>By default, the list page will show all models of that type. To filter by user or other properties, override the <em>instance_list</em> method:</p>
 
 <div class="highlight"><pre><span class="k">class</span> <span class="nc">AnimalHandler</span><span class="p">(</span><span class="n">tornado</span><span class="o">.</span><span class="n">web</span><span class="o">.</span><span class="n">RequestHandler</span><span class="p">):</span>
     <span class="k">def</span> <span class="nf">instance_list</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
@@ -125,11 +172,11 @@
 
 <h2>Templates</h2>
 
-<p>You must create your own template. Tempaltes will receive the variables <strong>obj</strong> or <strong>objs</strong> and <strong>alert</strong> in case there is some message.</p>
+<p>You must create your own template. Templates will receive the variables <strong>obj</strong> or <strong>objs</strong> and <strong>alert</strong> in case there is some message. The edit template will also receive the variable <strong>errors</strong> and functions <strong>value_for</strong>, <strong>error_for</strong> and <strong>has_error</strong>.</p>
 
 <p>It must have the names list.html, show.html and edit.html. But you can customize if you want to:</p>
 
-<div class="highlight"><pre><span class="n">rest_routes</span><span class="p">(</span><span class="n">Animal</span><span class="p">,</span> <span class="n">list_tempalte</span><span class="o">=</span><span class="s">'another_name.html'</span><span class="p">,</span> <span class="n">edit_template</span><span class="o">=</span><span class="s">'...'</span><span class="p">,</span> <span class="n">show_template</span><span class="o">=</span><span class="s">'...'</span><span class="p">),</span>
+<div class="highlight"><pre><span class="n">rest_routes</span><span class="p">(</span><span class="n">Animal</span><span class="p">,</span> <span class="n">list_template</span><span class="o">=</span><span class="s">'another_name.html'</span><span class="p">,</span> <span class="n">edit_template</span><span class="o">=</span><span class="s">'...'</span><span class="p">,</span> <span class="n">show_template</span><span class="o">=</span><span class="s">'...'</span><span class="p">),</span>
 </pre></div>
 
 <p>By default, the directory is the model name in lower case (animal in this example).</p>
@@ -162,7 +209,7 @@
 
 <h4>requirements.txt</h4>
 
-<pre><code>tornado-rest-handler==0.0.3
+<pre><code>tornado-rest-handler==0.0.4
 # or use the development version
 git+git://github.com/paulocheque/tornado-rest-handler.git#egg=tornado-rest-handler
 </code></pre>
@@ -179,7 +226,13 @@ git+git://github.com/paulocheque/tornado-rest-handler.git#egg=tornado-rest-handl
 <li>Tested with Tornado 2.4.1</li>
 </ul><h2>Change Log</h2>
 
-<h4>0.0.3 (2013/03/31)</h4>
+<h4>0.0.4 (2013/03/31)</h4>
+
+<ul>
+<li>[new] Passed validation errors (dict errors) to the edit template.</li>
+<li>[new] New functions passed to edit template: has_errors, value_for and error_for.</li>
+<li>[bugfix] Fixed bug that cause strange behavior when occurs validation errors.</li>
+</ul><h4>0.0.3 (2013/03/31)</h4>
 
 <ul>
 <li>[new] CrudHandler extracted from RestHandler.</li>
@@ -209,7 +262,6 @@ git+git://github.com/paulocheque/tornado-rest-handler.git#egg=tornado-rest-handl
 <ul>
 <li>Handlers for another ORMs (other than MongoEngine).</li>
 <li>Pagination</li>
-<li>Send valiation errors to forms</li>
 <li>i18n</li>
 <li>Use fields and exclude to facilitate auto-generate forms:</li>
 <li>plurarize</li>
