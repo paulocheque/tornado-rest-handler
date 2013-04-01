@@ -209,9 +209,7 @@ TODO
 
 * Handlers for another ORMs (other than MongoEngine).
 * Pagination
-* Send valiation errors to forms
 * i18n
 * Use fields and exclude to facilitate auto-generate forms:
 * plurarize
 * splitted handlers
-# has_error, has_error, errors (e.to_dict)
