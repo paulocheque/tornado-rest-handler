@@ -36,10 +36,8 @@ One handler manage every Rest routes:
 | DELETE       | /animal/:id         | delete an animal |
 | POST*        | /animals/:id/delete | same as DELETE /animals/:id |
 | POST*        | /animals/:id        | same as PUT /animals/:id |
- 
+
 * *Since HTML5-forms does not support PUT/DELETE. It is possible to use the following methods too:
-
-
 
 
 ```python
@@ -111,7 +109,7 @@ class AnimalHandler(tornado.web.RequestHandler):
 Templates
 ------------------------
 
-You must create your own template. Templates will receive the variables **obj** or **objs** and **alert** in case there is some message.
+You must create your own template. Templates will receive the variables **obj** or **objs** and **alert** in case there is some message. The edit template will also receive the variable **errors** and functions **value_for**, **error_for** and **has_error**.
 
 It must have the names list.html, show.html and edit.html. But you can customize if you want to:
 
@@ -156,7 +154,7 @@ pip install -e git+git@github.com:paulocheque/tornado-rest-handler.git#egg=torna
 #### requirements.txt
 
 ```
-tornado-rest-handler==0.0.3
+tornado-rest-handler==0.0.4
 # or use the development version
 git+git://github.com/paulocheque/tornado-rest-handler.git#egg=tornado-rest-handler
 ```
@@ -175,6 +173,11 @@ pip install tornado-rest-handler --upgrade --no-deps
 
 Change Log
 -------------
+
+#### 0.0.4 (2013/03/31)
+* [new] Passed validation errors (dict errors) to the edit template.
+* [new] New functions passed to edit template: has_errors, value_for and error_for.
+* [bugfix] Fixed bug that cause strange behavior when occurs validation errors.
 
 #### 0.0.3 (2013/03/31)
 * [new] CrudHandler extracted from RestHandler.
@@ -211,3 +214,4 @@ TODO
 * Use fields and exclude to facilitate auto-generate forms:
 * plurarize
 * splitted handlers
+# has_error, has_error, errors (e.to_dict)
