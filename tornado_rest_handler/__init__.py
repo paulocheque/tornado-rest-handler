@@ -63,7 +63,7 @@ class CrudHandler(tornado.web.RequestHandler):
             errors = tornado.util.ObjectDict()
             if hasattr(exception, 'to_dict'):
                 errors.update(**exception.to_dict())
-        value_for = lambda field: getattr(instance, field, '')
+        value_for = lambda field: getattr(instance, field, '') if getattr(instance, field, '') else ''
         has_error = lambda field: errors and field in errors.keys()
         error_for = lambda field: errors[field] if errors and field in errors else ''
         self.render(self.edit_template, obj=instance, errors=errors, alert=alert,
