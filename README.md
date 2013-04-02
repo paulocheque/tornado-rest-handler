@@ -37,7 +37,7 @@ One handler manage every Rest routes:
 | POST*        | /animals/:id/delete | same as DELETE /animals/:id |
 | POST*        | /animals/:id        | same as PUT /animals/:id |
 
-* *Since HTML5-forms does not support PUT/DELETE. It is possible to use the following methods too:
+* *Since HTML5-forms does not support PUT/DELETE, these additional POSTs were added.
 
 
 ```python
@@ -56,7 +56,7 @@ TORNADO_SETTINGS = {}
 application = tornado.web.Application(routes(TORNADO_ROUTES), **TORNADO_SETTINGS)
 ```
 
-The library does not support auto-plurazation yet, so you may want to change the prefix:
+The library does not support auto-pluralization yet, so you may want to change the prefix:
 
 ```python
 rest_routes(Animal, prefix='animals'),
@@ -215,5 +215,5 @@ TODO
 * Pagination
 * i18n
 * Use fields and exclude to facilitate auto-generate forms:
-* plurarize
+* pluralize urls
 * splitted handlers
