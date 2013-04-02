@@ -44,7 +44,7 @@ class CrudHandler(tornado.web.RequestHandler):
         data = {}
         for arg in list(self.request.arguments.keys()):
             data[arg] = self.get_argument(arg)
-            if data[arg] == u'': # Tornado 3.0+ compatibility
+            if data[arg] == '': # Tornado 3.0+ compatibility
                 data[arg] = None
         return data
 
