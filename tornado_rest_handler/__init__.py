@@ -10,7 +10,7 @@ class CrudHandlerMetaclass(type):
         result = super(CrudHandlerMetaclass, cls).__init__(name, bases, attrs)
         if attrs.get('__metaclass__') is not CrudHandlerMetaclass:
             # TODO
-            # cls.fields = cls.model._fields.keys()
+            # cls.fields = list(cls.model._fields.keys())
             # cls.exclude = []
             if cls.model:
                 cls.template_path = cls.model.__name__.lower() + '/'
@@ -24,7 +24,6 @@ class CrudHandlerMetaclass(type):
 
 
 class CrudHandler(tornado.web.RequestHandler):
-    __metaclass__ = CrudHandlerMetaclass
     model = None
     template_path = ''
     list_template = 'list.html'
@@ -43,7 +42,7 @@ class CrudHandler(tornado.web.RequestHandler):
 
     def get_request_data(self):
         data = {}
-        for arg in self.request.arguments.keys():
+        for arg in list(self.request.arguments.keys()):
             data[arg] = self.get_argument(arg)
         return data
 
@@ -64,7 +63,7 @@ class CrudHandler(tornado.web.RequestHandler):
             if hasattr(exception, 'to_dict'):
                 errors.update(**exception.to_dict())
         value_for = lambda field: getattr(instance, field, '') if getattr(instance, field, '') else ''
-        has_error = lambda field: errors and field in errors.keys()
+        has_error = lambda field: errors and field in list(errors.keys())
         error_for = lambda field: errors[field] if errors and field in errors else ''
         self.render(self.edit_template, obj=instance, errors=errors, alert=alert,
                     value_for=value_for, has_error=has_error, error_for=error_for)
@@ -115,6 +114,9 @@ class CrudHandler(tornado.web.RequestHandler):
     def save_instance(self, obj): pass
     def update_instance(self, obj): pass
     def delete_instance(self, obj): pass
+
+
+CrudHandler = CrudHandlerMetaclass(CrudHandler.__name__, CrudHandler.__bases__, dict(CrudHandler.__dict__))
 
 
 class RestHandler(CrudHandler):
