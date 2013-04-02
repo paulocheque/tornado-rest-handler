@@ -2,9 +2,12 @@ language: python
 python:
   - "2.6"
   - "2.7"
-# - "3.2"
+  - "3.2"
+env:
+  - TORNADO=2.4.1
+  - TORNADO=3.0
 install:
-  - pip install -r requirements.txt
+  - pip install -q tornado==$TORNADO --use-mirrors
   - pip install -r requirements-tests.txt
 script:
   - nosetests
