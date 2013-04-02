@@ -154,7 +154,7 @@ pip install -e git+git@github.com:paulocheque/tornado-rest-handler.git#egg=torna
 #### requirements.txt
 
 ```
-tornado-rest-handler==0.0.4
+tornado-rest-handler==0.0.5
 # or use the development version
 git+git://github.com/paulocheque/tornado-rest-handler.git#egg=tornado-rest-handler
 ```
