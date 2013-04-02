@@ -33,7 +33,7 @@ setup(name='tornado-rest-handler',
           'Topic :: Software Development'
       ],
 
-      version='0.0.4',
+      version='0.0.5',
       install_requires=install_requires,
       tests_require=tests_require,
       # test_suite='runtests.runtests',

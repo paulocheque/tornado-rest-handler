@@ -167,12 +167,16 @@ pip install tornado-rest-handler --upgrade --no-deps
 
 #### Requirements
 
-* Python 2.6 or 2.7
+* Python 2.6 or 2.7 or 3.*
 * Tested with Tornado 2.4.1 and 3.0
 
 
 Change Log
 -------------
+
+#### 0.0.5 (2013/04/01) (no lie!)
+* [new] Python3 is now supported
+* [test] Tested with Tornado 3.0 (compatible)
 
 #### 0.0.4 (2013/03/31)
 * [new] Passed validation errors (dict errors) to the edit template.
