@@ -32,7 +32,7 @@ class CrudHandler(tornado.web.RequestHandler):
     redirect_pos_action = None
 
     def render(self, template_name, **kwargs):
-        super(CrudHandler, self).render(self.template_path + template_name, **kwargs)
+        return super(CrudHandler, self).render(self.template_path + template_name, **kwargs)
 
     def raise403(self):
         raise tornado.web.HTTPError(403, 'Not enough permissions to perform this action')
@@ -47,13 +47,13 @@ class CrudHandler(tornado.web.RequestHandler):
         return data
 
     def page_list(self, alert=None):
-        self.render(self.list_template, objs=self.instance_list(), alert=alert)
+        return self.render(self.list_template, objs=self.instance_list(), alert=alert)
 
     def page_new(self):
-        self.page_edit(None)
+        return self.page_edit(None)
 
     def page_show(self, instance):
-        self.render(self.show_template, obj=instance)
+        return self.render(self.show_template, obj=instance)
 
     def page_edit(self, instance, exception=None, alert=None):
         errors = None
@@ -65,14 +65,14 @@ class CrudHandler(tornado.web.RequestHandler):
         value_for = lambda field: getattr(instance, field, '') if getattr(instance, field, '') else ''
         has_error = lambda field: errors and field in list(errors.keys())
         error_for = lambda field: errors[field] if errors and field in errors else ''
-        self.render(self.edit_template, obj=instance, errors=errors, alert=alert,
+        return self.render(self.edit_template, obj=instance, errors=errors, alert=alert,
                     value_for=value_for, has_error=has_error, error_for=error_for)
 
     def redirect_with_message(self, message=None):
         if self.redirect_pos_action:
-            self.redirect(self.redirect_pos_action)
+            return self.redirect(self.redirect_pos_action)
         else:
-            self.redirect('/')
+            return self.redirect('/')
 
     def action_create(self):
         data = self.get_request_data()
@@ -137,7 +137,7 @@ class RestHandler(CrudHandler):
 
     def get(self, model_id=None, edit=False):
         if re.match('^/.+/new', self.request.uri):
-            self.page_new()
+            return self.page_new()
         if model_id:
             instance = self.action_read(model_id, fail_silently=True)
             if instance:
@@ -152,16 +152,16 @@ class RestHandler(CrudHandler):
 
     def post(self, model_id=None, action=None):
         if model_id and re.match('^/.+/delete', self.request.uri):
-            self.action_delete(model_id)
+            return self.action_delete(model_id)
         if model_id:
             return self.action_update(model_id)
         return self.action_create()
 
     def put(self, model_id):
-        self.action_update(model_id)
+        return self.action_update(model_id)
 
     def delete(self, model_id):
-        self.action_delete(model_id)
+        return self.action_delete(model_id)
 
 
 class MongoEngineRestHandler(RestHandler):
