@@ -35,4 +35,5 @@ nosetests.xml
 .pydevproject
 
 env/
-env3
+env3/
+env32/
