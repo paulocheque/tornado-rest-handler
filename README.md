@@ -39,6 +39,8 @@ One handler manage every Rest routes:
 
 * *Since HTML5-forms does not support PUT/DELETE, these additional POSTs were added.
 
+* To specify Tornado Rest routes you can use the method **rest_routes**:
+
 
 ```python
 from tornado_rest_handler import routes, rest_routes
