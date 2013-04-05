@@ -19,7 +19,7 @@ def colorize(text, color)
   end
 end
 
-def virtual_env(command, env="env")
+def virtual_env(command, env="env27")
   sh "source #{env}/bin/activate ; #{command}"
 end
 
