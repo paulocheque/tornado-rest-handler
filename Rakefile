@@ -23,10 +23,22 @@ def virtual_env(command, env="env")
   sh "source #{env}/bin/activate ; #{command}"
 end
 
+def create_virtual_env(dir, python)
+  sh "virtualenv #{dir} -p #{python}"
+  virtual_env("pip install -r requirements.txt")
+  virtual_env("pip install -r requirements-test.txt")
+end
+
+task :dev_env => [] do
+  create_virtual_env("env27", "python2.7")
+  create_virtual_env("env32", "python3.2")
+  create_virtual_env("env33", "python3.3")
+end
+
 task :tests => [] do
-  virtual_env("nosetests")
-  virtual_env("nosetests", "env3")
+  virtual_env("nosetests", "env27")
   virtual_env("nosetests", "env32")
+  virtual_env("nosetests", "env33")
 end
 
 task :tag => [:tests] do
