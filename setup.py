@@ -1,18 +1,8 @@
 #from distutils.core import setup
 from setuptools import setup, find_packages
 
-# http://guide.python-distribute.org/quickstart.html
-# python setup.py sdist
-# python setup.py register
-# python setup.py sdist upload
-# pip install tornado-rest-handler
-# pip install tornado-rest-handler --upgrade --no-deps
-# Manual upload to PypI
-# http://pypi.python.org/pypi/tornado-rest-handler
-# Go to 'edit' link
-# Update version and save
-# Go to 'files' link and upload the file
-
+VERSION = open('VERSION', 'r').read().strip()
+PROJECT_NAME = 'tornado-rest-handler'
 
 tests_require = [
 ]
@@ -20,8 +10,8 @@ tests_require = [
 install_requires = [
 ]
 
-setup(name='tornado-rest-handler',
-      url='https://github.com/paulocheque/tornado-rest-handler',
+setup(name='%s' % PROJECT_NAME,
+      url='https://github.com/paulocheque/%s' % PROJECT_NAME,
       author="paulocheque",
       author_email='paulocheque@gmail.com',
       keywords='python tornado rest handler',
