@@ -48,6 +48,6 @@ def routes(route_list):
 
 def rest_routes(model, **kwargs):
     data_manager = kwargs.pop('data_manager', MongoEngineDataManager)
-    kwargs['base_handler'] = kwargs['base_handler'] if 'base_handler' in kwargs else TornadoRestHandler
+    kwargs['base_handler'] = kwargs.get('base_handler', TornadoRestHandler)
     return python_rest_handler.rest_routes(model, data_manager, **kwargs)
 
