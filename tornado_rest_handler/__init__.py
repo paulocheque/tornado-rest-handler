@@ -4,3 +4,4 @@ if sys.version_info[0] == 2:
 else:
     from .trh import *
 
+VERSION = open('VERSION', 'r').read().strip()
