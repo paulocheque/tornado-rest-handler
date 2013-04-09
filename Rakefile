@@ -51,8 +51,8 @@ end
 task :dependencies => [:dev_env] do
   envs = ["env26", "env27", "env32", "env33"]
   envs.each { |env|
-    virtual_env("pip install -r requirements.txt", "#{env}")
-    virtual_env("pip install -r requirements-test.txt", "#{env}")
+    virtual_env("pip install -r requirements.txt --upgrade", "#{env}")
+    virtual_env("pip install -r requirements-test.txt --upgrade", "#{env}")
   }
 end
 

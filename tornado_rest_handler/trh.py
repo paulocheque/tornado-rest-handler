@@ -2,6 +2,7 @@
 import tornado.web
 
 import python_rest_handler
+from python_rest_handler.data_managers import MongoEngineDataManager
 
 
 class TornadoRestHandler(tornado.web.RequestHandler, python_rest_handler.RestRequestHandler):
@@ -39,25 +40,6 @@ class TornadoRestHandler(tornado.web.RequestHandler, python_rest_handler.RestReq
 
     def redirect(self, url, permanent=False, status=None, **kwargs):
         return super(TornadoRestHandler, self).redirect(url, permanent=permanent, status=status)
-
-
-class MongoEngineDataManager(python_rest_handler.DataManager):
-    def instance_list(self):
-        return self.model.objects.all()
-
-    def find_instance_by_id(self, instance_id):
-        return self.instance_list().get(pk=instance_id)
-
-    def save_instance(self, data):
-        instance = self.model(**data)
-        instance.save()
-
-    def update_instance(self, instance, data):
-        instance.__dict__['_data'].update(**data)
-        instance.save()
-
-    def delete_instance(self, instance):
-        instance.delete()
 
 
 def routes(route_list):
