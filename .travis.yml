@@ -9,7 +9,7 @@ env:
   - TORNADO=3.0
 install:
   - pip install -q tornado==$TORNADO --use-mirrors
-  - pip install -e git+git@github.com:paulocheque/python-rest-handler.git#egg=python-rest-handler
+  - pip install git+https://github.com/paulocheque/python-rest-handler.git#egg=python-rest-handler --upgrade
   - pip install -r requirements-test.txt
 script:
   - nosetests
