@@ -1,5 +1,5 @@
 tornado==3.0
 
-#python-rest-handler
+python-rest-handler==0.0.1
 #git+git://github.com/paulocheque/python-rest-handler.git#egg=python-rest-handler
-git+https://github.com/paulocheque/python-rest-handler.git#egg=python-rest-handler
+#git+https://github.com/paulocheque/python-rest-handler.git#egg=python-rest-handler

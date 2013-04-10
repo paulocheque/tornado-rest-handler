@@ -5,10 +5,14 @@ tornado-rest-handler
 
 A simple Python Tornado handler that manage Rest requests automatically.
 
+From now on (0.0.6+ release), Tornado Rest Handler uses the **Python Rest Handler** library (https://github.com/paulocheque/python-rest-handler). All complexity of the code was move to that library.
+
 * [Basic Example of Usage](#basic-example-of-usage)
   * [Routes](#routes)
   * [Handlers](#handlers)
+  * [Data Managers](#data-managers)
   * [Templates](#templates)
+* [Plugins](#plugins)
 * [Installation](#installation)
 * [Change Log](#change-log)
 * [TODO](#todo)
@@ -76,7 +80,9 @@ Handlers
 All the get/post/put/delete methods are implemented for you, but if you want to customize some behavior, you write your own handler:
 
 ```python
-class AnimalHandler(tornado.web.RequestHandler):
+from tornado_rest_handler import TornadoRestHandler
+
+class AnimalHandler(TornadoRestHandler):
     pass # your custom methods here
 ```
 
@@ -86,26 +92,26 @@ And then, registered it:
 rest_routes(Animal, handler=AnimalHandler),
 ```
 
-To create a RestHandler for your ORM you must override the RestHandler class and implement the following methods:
+Data Managers
+------------------------
+
+To create a RestHandler for your ORM you must override the DataManager class and implement the following methods:
 
 ```python
-from tornado_rest_handler import RestHandler
+from python_rest_handler import DataManager
 
-class CouchDBRestHandler(RestHandler):
-    def instance_list(self): return [] # it can return a list or a queryset etc
-    def find_instance_by_id(self, obj_id): pass
-    def save_instance(self, obj): pass
-    def update_instance(self, obj): pass
-    def delete_instance(self, obj): pass
+class CouchDBDataManager(DataManager):
+    def instance_list(self): return []
+    def find_instance_by_id(self, instance_id): pass
+    def save_instance(self, data): pass
+    def update_instance(self, instance, data): pass
+    def delete_instance(self, instance): pass
+
+class YourTornadoRestHandler(TornadoRestHandler):
+    data_manager = CouchDBDataManager
 ```
 
-By default, the list page will show all models of that type. To filter by user or other properties, override the *instance_list* method:
-
-```python
-class AnimalHandler(tornado.web.RequestHandler):
-    def instance_list(self):
-        return Animal.objects.filter(...)
-```
+Check the **Python Rest Handler** library (https://github.com/paulocheque/python-rest-handler) for more details.
 
 
 Templates
@@ -129,6 +135,23 @@ But you may change the directory though:
 
 ```python
 rest_routes(Animal, template_path='your_template_path'),
+```
+
+
+Plugins
+------------
+
+You can pass additional functions to your templates. This library include functions that generate widgets according to a Twitter-Bootstrap template.
+
+```python
+from python_rest_handler.plugins.bootstrap import *
+
+extra_attributes = {'bs_input_text': bs_input_text,
+                    'bs_input_password':bs_input_password,
+                    'bs_select_field':bs_select_field,
+                    'bs_button':bs_button}
+
+rest_routes(Animal, extra_attributes=extra_attributes),
 ```
 
 
@@ -156,7 +179,7 @@ pip install -e git+git@github.com:paulocheque/tornado-rest-handler.git#egg=torna
 #### requirements.txt
 
 ```
-tornado-rest-handler==0.0.5
+tornado-rest-handler==0.0.6
 # or use the development version
 git+git://github.com/paulocheque/tornado-rest-handler.git#egg=tornado-rest-handler
 ```
@@ -175,6 +198,10 @@ pip install tornado-rest-handler --upgrade --no-deps
 
 Change Log
 -------------
+
+#### 0.0.6 (2013/04/07)
+* [new] This library from now will use the python-rest-handler library.
+* [new] Plugin system that enable send more functions to the templates.
 
 #### 0.0.5 (2013/04/01) (no lie!)
 * [new] Python3 is now supported
@@ -214,8 +241,4 @@ TODO
 -------------
 
 * Handlers for another ORMs (other than MongoEngine).
-* Pagination
-* i18n
-* Use fields and exclude to facilitate auto-generate forms:
-* pluralize urls
-* splitted handlers
+* Check Python-Rest-Handler TODO other stuff
