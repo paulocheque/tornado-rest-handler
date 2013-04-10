@@ -23,7 +23,7 @@ setup(name='%s' % PROJECT_NAME,
           'Topic :: Software Development'
       ],
 
-      version='0.0.5',
+      version='%s' % VERSION,
       install_requires=install_requires,
       tests_require=tests_require,
       # test_suite='runtests.runtests',

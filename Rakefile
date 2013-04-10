@@ -71,8 +71,6 @@ end
 task :reset_tag => [] do
   sh "git tag -d #{VERSION}"
   sh "git push origin :refs/tags/#{VERSION}"
-  sh "git tag #{VERSION}"
-  sh "git push origin #{VERSION}"
 end
 
 task :publish => [:tests, :tag] do
