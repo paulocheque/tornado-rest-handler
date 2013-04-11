@@ -1,4 +1,6 @@
 VERSION = File.open('VERSION').gets.strip
+PYTHON_ENVS = [:env26, :env27, :env32, :env33]
+PYTHON_EXECS = {:env26 => "python2.6", :env27 => "python2.7", :env32 => "python3.2", :env33 => "python3.3"}
 
 def colorize(text, color)
   color_codes = {
@@ -42,25 +44,25 @@ task :install => [] do
 end
 
 task :dev_env => [] do
-  create_virtual_env("env26", "python2.6")
-  create_virtual_env("env27", "python2.7")
-  create_virtual_env("env32", "python3.2")
-  create_virtual_env("env33", "python3.3")
+  PYTHON_ENVS.each { |env|
+    puts colorize("Environment #{env}", :blue)
+    create_virtual_env(env, PYTHON_EXECS[env])
+  }
 end
 
 task :dependencies => [:dev_env] do
-  envs = ["env26", "env27", "env32", "env33"]
-  envs.each { |env|
-    virtual_env("pip install -r requirements.txt --upgrade", "#{env}")
-    virtual_env("pip install -r requirements-test.txt --upgrade", "#{env}")
+  PYTHON_ENVS.each { |env|
+    puts colorize("Environment #{env}", :blue)
+    virtual_env("pip install -r requirements.txt", "#{env}")
+    virtual_env("pip install -r requirements-test.txt", "#{env}")
   }
 end
 
 task :tests => [] do
-  virtual_env("nosetests", "env26")
-  virtual_env("nosetests", "env27")
-  virtual_env("nosetests", "env32")
-  virtual_env("nosetests", "env33")
+  PYTHON_ENVS.each { |env|
+    puts colorize("Environment #{env}", :blue)
+    virtual_env("nosetests", env)
+  }
 end
 
 task :tag => [:tests] do
