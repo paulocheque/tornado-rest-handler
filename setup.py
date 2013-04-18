@@ -5,9 +5,13 @@ VERSION = open('VERSION', 'r').read().strip()
 PROJECT_NAME = 'tornado-rest-handler'
 
 tests_require = [
+    'nose',
+    'coverage',
 ]
 
 install_requires = [
+    'tornado==3.0',
+    'python-rest-handler==0.0.1',
 ]
 
 setup(name='%s' % PROJECT_NAME,
