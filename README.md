@@ -179,7 +179,7 @@ pip install -e git+git@github.com:paulocheque/tornado-rest-handler.git#egg=torna
 #### requirements.txt
 
 ```
-tornado-rest-handler==0.0.6
+tornado-rest-handler==0.0.7
 # or use the development version
 git+git://github.com/paulocheque/tornado-rest-handler.git#egg=tornado-rest-handler
 ```
@@ -198,6 +198,10 @@ pip install tornado-rest-handler --upgrade --no-deps
 
 Change Log
 -------------
+
+#### 0.0.7 (2013/04/28)
+
+* [new] Using Python-Rest-Handler 0.0.2. All the new stuff of its version is applied to Tornado Rest Handler.
 
 #### 0.0.6 (2013/04/07)
 * [new] This library from now will use the python-rest-handler library.
