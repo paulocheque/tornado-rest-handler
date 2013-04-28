@@ -92,6 +92,18 @@ And then, registered it:
 rest_routes(Animal, handler=AnimalHandler),
 ```
 
+It is possible to create only some routes/actions. You can use the <code>only</code> and <code>exclude</code> attributes for this. The available routes and actions are: <code>new</code>, <code>show</code>, <code>list</code>, <code>edit</code> and <code>delete</code>.
+
+```python
+rest_routes(Animal, handler=AnimalHandler, only=['new', 'edit', 'show', 'list']),
+
+# or
+
+rest_routes(Animal, handler=AnimalHandler, exclude=['exclude']),
+```
+
+
+
 Data Managers
 ------------------------
 
@@ -142,6 +154,16 @@ Plugins
 ------------
 
 You can pass additional functions to your templates. This library include functions that generate widgets according to a Twitter-Bootstrap template.
+
+To apply to all Rest Handlers:
+
+```python
+from tornado_rest_handler import *
+
+activate_plugin('bootstrap')
+```
+
+Or to apply to one specific Rest Handler:
 
 ```python
 from python_rest_handler.plugins.bootstrap import *
