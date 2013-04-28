@@ -31,7 +31,7 @@ end
 
 task :clean => [] do
   sh "rm -rf ~*"
-  sh "rm -rf *.pyc *.pyo"
+  sh "find . -name '*.pyc' -delete"
   sh "rm -rf data/"
   sh "rm -rf *.egg-info"
   sh "rm -rf dist/"
@@ -87,6 +87,8 @@ task :publish => [:tests, :tag] do
   # Go to 'files' link and upload the file
   virtual_env("python setup.py sdist upload")
 end
+
+task :all => [:dev_env, :dependencies, :tests]
 
 task :default => [:tests]
 
