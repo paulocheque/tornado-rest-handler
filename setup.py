@@ -10,8 +10,8 @@ tests_require = [
 ]
 
 install_requires = [
-    'tornado==3.0',
-    'python-rest-handler==0.0.1',
+    'tornado==3.0.1',
+    'python-rest-handler==0.0.2',
 ]
 
 setup(name='%s' % PROJECT_NAME,

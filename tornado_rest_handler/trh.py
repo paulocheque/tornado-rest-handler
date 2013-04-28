@@ -24,6 +24,9 @@ class TornadoRestHandler(tornado.web.RequestHandler, python_rest_handler.RestReq
     def raise404(self):
         raise tornado.web.HTTPError(404, 'Object not found')
 
+    def raise405(self):
+        raise tornado.web.HTTPError(405, 'Method Not Allowed')
+
     def get_request_uri(self):
         return self.request.uri
 
@@ -51,3 +54,14 @@ def rest_routes(model, **kwargs):
     kwargs['base_handler'] = kwargs.get('base_handler', TornadoRestHandler)
     return python_rest_handler.rest_routes(model, data_manager, **kwargs)
 
+
+def routes(route_list):
+    return python_rest_handler.routes(route_list)
+
+
+def activate_plugin(name):
+    return python_rest_handler.activate_plugin(name)
+
+
+def deactivate_plugin(name):
+    return python_rest_handler.deactivate_plugin(name)
