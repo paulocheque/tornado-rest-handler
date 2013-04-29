@@ -3,6 +3,8 @@ tornado-rest-handler
 
 ![Continuous Integration Status](https://secure.travis-ci.org/paulocheque/tornado-rest-handler.png)
 
+#### Latest version: 0.0.7 (2013/04/28)
+
 A simple Python Tornado handler that manage Rest requests automatically.
 
 From now on (0.0.6+ release), Tornado Rest Handler uses the **Python Rest Handler** library (https://github.com/paulocheque/python-rest-handler). All complexity of the code was move to that library.
