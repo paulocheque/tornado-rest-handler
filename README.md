@@ -101,7 +101,7 @@ rest_routes(Animal, handler=AnimalHandler, only=['new', 'edit', 'show', 'list'])
 
 # or
 
-rest_routes(Animal, handler=AnimalHandler, exclude=['exclude']),
+rest_routes(Animal, handler=AnimalHandler, exclude=['delete']),
 ```
 
 
